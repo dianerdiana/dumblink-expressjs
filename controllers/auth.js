@@ -20,7 +20,7 @@ exports.register = async (req, res) => {
     return res.status(400).send({
       status: false,
       message: 'Failed',
-      error: error.details[0].message,
+      error: error.message,
     });
   }
 
@@ -50,6 +50,64 @@ exports.register = async (req, res) => {
     res.status(500).send({
       status: false,
       message: error,
+    });
+  }
+};
+
+exports.login = async (req, res) => {
+  const { email, password } = req.body;
+
+  const schema = Joi.object({
+    email: Joi.string().email().min(6).required(),
+    password: Joi.string().min(6).required(),
+  });
+
+  const { error } = schema.validate({ email, password });
+
+  if (error) {
+    res.status(400).send({
+      status: false,
+      message: constants.failed,
+      error: error.message,
+    });
+  }
+
+  const user = await users.findOne({
+    where: { email },
+  });
+
+  if (user) {
+    try {
+      const is_valid = await bcrypt.compare(password, user.password);
+
+      if (!is_valid) {
+        return res.status(404).send({
+          status: is_valid,
+          message: "Email & Password don't match!",
+        });
+      }
+
+      const token = jwt.sign({ id: user.id_user }, process.env.TOKEN_KEY);
+
+      res.status(200).send({
+        status: is_valid,
+        message: constants.success,
+        data: {
+          fullname: user.fullname,
+          email: user.fullname,
+          token,
+        },
+      });
+    } catch (error) {
+      res.status(500).send({
+        status: false,
+        message: error,
+      });
+    }
+  } else {
+    res.status(404).send({
+      status: false,
+      message: "Email & Password don't match!",
     });
   }
 };
