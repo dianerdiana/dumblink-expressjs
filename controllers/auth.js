@@ -11,7 +11,10 @@ exports.register = async (req, res) => {
   const schema = Joi.object({
     fullname: Joi.string().min(3).required(),
     email: Joi.string().email().min(6).required(),
-    password: Joi.string().min(6).required(),
+    password: Joi.string().min(6).required().messages({
+      'string.empty': "password doesn't be empty",
+      'string.min': 'password length must be at least 6 characters long',
+    }),
   });
 
   const { error } = schema.validate({ fullname, email, password });
@@ -36,7 +39,7 @@ exports.register = async (req, res) => {
     });
 
     const token = jwt.sign({ id_user: newUser.id_user }, process.env.TOKEN_KEY);
-    console.log(newUser);
+
     res.status(200).send({
       status: true,
       message: CONSTANTS.success,
@@ -58,7 +61,7 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   const schema = Joi.object({
-    email: Joi.string().email().min(6).required(),
+    email: Joi.string().email().min(6).required().messages(),
     password: Joi.string().min(6).required(),
   });
 
