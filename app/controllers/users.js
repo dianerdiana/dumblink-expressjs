@@ -1,4 +1,4 @@
-const { users } = require('../models');
+const { users } = require('../../models');
 const CONSTANTS = require('../helpers/Constants');
 
 exports.getUser = async (req, res) => {
