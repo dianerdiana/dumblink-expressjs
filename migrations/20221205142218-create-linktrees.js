@@ -2,21 +2,39 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('users', {
-      id_user: {
+    await queryInterface.createTable('linktrees', {
+      id_linktree: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      fullname: {
+      title: {
         type: Sequelize.STRING,
       },
-      email: {
+      description: {
+        type: Sequelize.TEXT,
+      },
+      unique_link: {
         type: Sequelize.STRING,
       },
-      password: {
+      view_count: {
+        type: Sequelize.INTEGER,
+      },
+      image: {
         type: Sequelize.STRING,
+      },
+      created_by: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id_user',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
+      link_id: {
+        type: Sequelize.ARRAY,
       },
       created_at: {
         allowNull: false,
@@ -31,6 +49,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('linktrees');
   },
 };

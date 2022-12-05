@@ -6,7 +6,7 @@ exports.getUser = async (req, res) => {
   const user = await users.findOne({
     where: { id_user: id },
     attributes: {
-      exclude: ['password', 'createdAt', 'updatedAt'],
+      exclude: ['password', 'created_at', 'updated_at'],
     },
   });
 

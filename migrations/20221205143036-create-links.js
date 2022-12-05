@@ -2,21 +2,27 @@
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable('users', {
-      id_user: {
+    await queryInterface.createTable('links', {
+      id_link: {
         allowNull: false,
         autoIncrement: true,
         primaryKey: true,
         type: Sequelize.INTEGER,
       },
-      fullname: {
+      title: {
         type: Sequelize.STRING,
       },
-      email: {
+      url: {
         type: Sequelize.STRING,
       },
-      password: {
-        type: Sequelize.STRING,
+      linktree_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'linktrees',
+          key: 'id_linktree',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       created_at: {
         allowNull: false,
@@ -31,6 +37,6 @@ module.exports = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('users');
+    await queryInterface.dropTable('links');
   },
 };
