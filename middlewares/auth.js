@@ -1,7 +1,6 @@
 const jwt = require('jsonwebtoken');
-const CONSTANTS = require('../helpers/Constants');
 
-const auth = (req, res, next) => {
+exports.auth = (req, res, next) => {
   try {
     const header = req.header('Authorization');
     const token = header && header.split(' ')[1];
@@ -20,9 +19,7 @@ const auth = (req, res, next) => {
   } catch {
     res.status(400).send({
       status: false,
-      message: CONSTANTS.failed,
+      message: 'Token failed',
     });
   }
 };
-
-module.exports = auth;

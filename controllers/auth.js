@@ -35,7 +35,7 @@ exports.register = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = jwt.sign({ id: newUser.id_user }, process.env.TOKEN_KEY);
+    const token = jwt.sign({ id_user: newUser.id_user }, process.env.TOKEN_KEY);
     console.log(newUser);
     res.status(200).send({
       status: true,
@@ -87,7 +87,7 @@ exports.login = async (req, res) => {
         });
       }
 
-      const token = jwt.sign({ id: user.id_user }, process.env.TOKEN_KEY);
+      const token = jwt.sign({ id_user: user.id_user }, process.env.TOKEN_KEY);
 
       res.status(200).send({
         status: is_valid,
