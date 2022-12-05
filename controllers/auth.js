@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const constants = require('../helpers/Constants');
+const CONSTANTS = require('../helpers/Constants');
 
 const { users } = require('../models');
 
@@ -39,7 +39,7 @@ exports.register = async (req, res) => {
     console.log(newUser);
     res.status(200).send({
       status: true,
-      message: constants.success,
+      message: CONSTANTS.success,
       data: {
         fullname: newUser.fullname,
         email: newUser.email,
@@ -67,7 +67,7 @@ exports.login = async (req, res) => {
   if (error) {
     res.status(400).send({
       status: false,
-      message: constants.failed,
+      message: CONSTANTS.failed,
       error: error.message,
     });
   }
@@ -91,7 +91,7 @@ exports.login = async (req, res) => {
 
       res.status(200).send({
         status: is_valid,
-        message: constants.success,
+        message: CONSTANTS.success,
         data: {
           fullname: user.fullname,
           email: user.fullname,
