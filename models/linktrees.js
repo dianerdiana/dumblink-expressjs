@@ -22,12 +22,15 @@ module.exports = (sequelize, DataTypes) => {
       description: DataTypes.TEXT,
       unique_link: DataTypes.STRING,
       view_count: DataTypes.INTEGER,
+      template: DataTypes.STRING,
       image: DataTypes.STRING,
       created_by: DataTypes.INTEGER,
       link_id: DataTypes.STRING,
     },
     {
       sequelize,
+      createdAt: 'created_at',
+      updatedAt: 'updated_at',
       modelName: 'linktrees',
     }
   );

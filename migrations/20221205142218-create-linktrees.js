@@ -21,6 +21,9 @@ module.exports = {
       view_count: {
         type: Sequelize.INTEGER,
       },
+      template: {
+        type: Sequelize.STRING,
+      },
       image: {
         type: Sequelize.STRING,
       },
@@ -34,7 +37,7 @@ module.exports = {
         onUpdate: 'CASCADE',
       },
       link_id: {
-        type: Sequelize.ARRAY,
+        type: Sequelize.STRING,
       },
       created_at: {
         allowNull: false,
