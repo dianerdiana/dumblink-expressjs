@@ -85,6 +85,9 @@ exports.getLinktrees = async (req, res) => {
       where: {
         created_by: id_user,
       },
+      attributes: {
+        exclude: ['created_at', 'updated_at']
+      }
     });
 
     if (allData) {
