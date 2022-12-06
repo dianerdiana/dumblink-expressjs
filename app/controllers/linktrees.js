@@ -29,30 +29,39 @@ exports.addLinktree = async (req, res) => {
   try {
     const link_id = [];
 
-    for (let i = 0; i < linkParsed.length; i++) {
-      const newLink = await links.create({
-        title: linkParsed[i].title,
-        url: linkParsed[i].url,
-      });
-  
-      link_id.push(newLink.id_link);
-    }
-
     const newLinktree = await linktrees.create({
       created_by: id_user,
       title,
       description,
       unique_link,
       template,
-      link_id: JSON.stringify(link_id),
       image,
       view_count: 0,
     });
+
+    for (let i = 0; i < linkParsed.length; i++) {
+      const newLink = await links.create({
+        title: linkParsed[i].title,
+        url: linkParsed[i].url,
+        linktree_id: newLinktree.id_linktree,
+      });
+  
+      link_id.push(newLink.id_link);
+    }
+
+    await newLinktree.set({
+      link_id: JSON.stringify(link_id)
+    })
+
+    await newLinktree.save()
 
     const data = await linktrees.findOne({
       where: {
         id_linktree: newLinktree.id_linktree,
       },
+      attributes: {
+        exclude: ['created_at', 'updated_at']
+      }
     });
 
     res.status(200).send({
@@ -63,7 +72,7 @@ exports.addLinktree = async (req, res) => {
   } catch (error) {
     res.status(500).send({
       status: false,
-      message: error,
+      message: error ? error : 'Server error',
     });
   }
 };
