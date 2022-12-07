@@ -168,22 +168,127 @@ exports.getLinktree = async (req, res) => {
 };
 
 exports.updateLinktree = async (req, res) => {
-  const { id } = req.params;
+  const { id_user } = req.user;
+  const { title, id_linktree, description, template, link_group, old_link_id } =
+    req.body;
+  const image = req.file.filename;
+  const unique_link = nanoid(10);
+  const linkGroupParsed = JSON.parse(link_group);
+  const oldLinkParsed = JSON.parse(old_link_id);
+
+  const getLinkTypes = new Promise((resolve, reject) => {
+    const mustUpdate = new Array();
+    const mustCreate = new Array();
+    const mustDelete = new Array();
+
+    for (let i = 0; i < linkGroupParsed.length; i++) {
+      if (linkGroupParsed[i].hasOwnProperty('id_link')) {
+        for (let x = 0; x < oldLinkParsed.length; x++) {
+          if (oldLinkParsed[x] === linkGroupParsed[i].id_link) {
+            mustUpdate.push(linkGroupParsed[i]);
+          } else {
+            mustDelete.push(oldLinkParsed[x]);
+          }
+        }
+      } else {
+        mustCreate.push(linkGroupParsed[i]);
+      }
+    }
+
+    if (mustUpdate.length > 0 || mustCreate.length > 0) {
+      resolve({ mustUpdate, mustCreate, mustDelete });
+    } else {
+      reject({ status: false, message: 'Error' });
+    }
+  });
 
   try {
     const data = await linktrees.findOne({
       where: {
-        id_linktree: id,
+        id_linktree,
       },
       attributes: {
         exclude: ['created_at', 'updated_at'],
       },
+      inlcude: {
+        model: links,
+        as: 'links',
+      },
     });
 
     if (data) {
+      // Delete old image
+      await fs.unlink(path.join('uploads/' + data.image));
+
+      const { mustUpdate, mustCreate, mustDelete } = await getLinkTypes.then(
+        res
+      );
+
+      const updatedLinks = new Promise(async (resolve, rejects) => {
+        const results = new Array();
+
+        // Update when form data same with old
+        if (mustUpdate.length > 0) {
+          for (let i = 0; i < mustUpdate.length; i++) {
+            await links.update(
+              { title: mustUpdate[i].title, url: mustUpdate[i].url },
+              {
+                where: { id_link: mustUpdate[i].id_link },
+              }
+            );
+
+            results.push(mustUpdate[i].id_link);
+          }
+        }
+
+        // Create data when id is not found from old
+        if (mustCreate.length > 0) {
+          for (let i = 0; i < mustCreate.length; i++) {
+            const link = await links.create({
+              title: mustCreate[i].title,
+              url: mustCreate[i].url,
+              linktree_id: id_linktree,
+            });
+
+            results.push(link.id_link);
+          }
+        }
+
+        // Delete data when old is not send again
+        if (mustDelete.length > 0) {
+          for (let i = 0; i < mustDelete.length; i++) {
+            await links.destroy({ where: { id_link: mustDelete[i] } });
+          }
+        }
+
+        if (results.length > 0) {
+          resolve(JSON.stringify(results));
+        } else {
+          rejects({ status: false, message: 'Error', results });
+        }
+      });
+
+      const link_id = await updatedLinks
+        .then((res) => res)
+        .catch((err) => err)
+        .finally('Final');
+
+      // update linktrees
+      await data.update({
+        updated_by: id_user,
+        title,
+        description,
+        unique_link,
+        template,
+        image,
+        link_id,
+      });
+
+      await data.save();
+
       return res.status(200).send({
         status: true,
-        message: CONSTANTS.delete_success,
+        message: CONSTANTS.update_success,
         data: {
           ...data.dataValues,
           image: process.env.API_BASE_URL + '/uploads/' + data.image,

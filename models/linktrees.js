@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       template: DataTypes.STRING,
       image: DataTypes.STRING,
       created_by: DataTypes.INTEGER,
+      updated_by: DataTypes.INTEGER,
       link_id: DataTypes.STRING,
     },
     {

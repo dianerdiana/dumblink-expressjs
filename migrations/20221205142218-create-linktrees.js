@@ -36,6 +36,15 @@ module.exports = {
         onDelete: 'CASCADE',
         onUpdate: 'CASCADE',
       },
+      updated_by: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'users',
+          key: 'id_user',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
+      },
       link_id: {
         type: Sequelize.STRING,
       },
