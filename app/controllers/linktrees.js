@@ -25,7 +25,6 @@ exports.addLinktree = async (req, res) => {
     });
   }
 
-
   try {
     const link_id = [];
 
@@ -35,7 +34,7 @@ exports.addLinktree = async (req, res) => {
       description,
       unique_link,
       template,
-      image,
+      image: process.env.API_BASE_URL + '/uploads/' + image,
       view_count: 0,
     });
 
@@ -45,23 +44,23 @@ exports.addLinktree = async (req, res) => {
         url: linkParsed[i].url,
         linktree_id: newLinktree.id_linktree,
       });
-  
+
       link_id.push(newLink.id_link);
     }
 
     await newLinktree.set({
-      link_id: JSON.stringify(link_id)
-    })
+      link_id: JSON.stringify(link_id),
+    });
 
-    await newLinktree.save()
+    await newLinktree.save();
 
     const data = await linktrees.findOne({
       where: {
         id_linktree: newLinktree.id_linktree,
       },
       attributes: {
-        exclude: ['created_at', 'updated_at']
-      }
+        exclude: ['created_at', 'updated_at'],
+      },
     });
 
     res.status(200).send({
@@ -86,8 +85,12 @@ exports.getLinktrees = async (req, res) => {
         created_by: id_user,
       },
       attributes: {
-        exclude: ['created_at', 'updated_at']
-      }
+        exclude: ['created_at', 'updated_at'],
+      },
+      include: {
+        model: links,
+        as: 'links',
+      },
     });
 
     if (allData) {
@@ -97,7 +100,10 @@ exports.getLinktrees = async (req, res) => {
         data: allData,
       });
     } else {
-      res.status();
+      res.status(500).send({
+        status: false,
+        message: 'Server error',
+      });
     }
   } catch (error) {
     res.status(500).send({

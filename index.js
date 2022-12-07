@@ -14,5 +14,6 @@ app.get('/', (req, res) => {
 });
 app.use('/api/v1/', router);
 app.use('/uploads', express.static('uploads'));
+app.use('/public', express.static('public'));
 
 app.listen(port, () => console.log(`Server is running at port: ${port}`));

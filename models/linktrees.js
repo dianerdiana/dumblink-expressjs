@@ -9,6 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      linktrees.hasMany(models.links, {
+        as: 'links',
+        foreignKey: {
+          name: 'linktree_id',
+        },
+      });
     }
   }
   linktrees.init(

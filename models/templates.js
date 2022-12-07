@@ -1,7 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
-  class links extends Model {
+  class templates extends Model {
     /**
      * Helper method for defining associations.
      * This method is not a part of Sequelize lifecycle.
@@ -9,31 +9,23 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
-      links.belongsTo(models.linktrees, {
-        as: 'links',
-        foreignKey: {
-          name: 'linktree_id',
-        },
-      });
     }
   }
-  links.init(
+  templates.init(
     {
-      id_link: {
+      id_template: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
       },
-      title: DataTypes.STRING,
-      url: DataTypes.STRING,
-      linktree_id: DataTypes.INTEGER,
+      template_name: DataTypes.STRING,
     },
     {
       sequelize,
       createdAt: 'created_at',
       updatedAt: 'updated_at',
-      modelName: 'links',
+      modelName: 'templates',
     }
   );
-  return links;
+  return templates;
 };
