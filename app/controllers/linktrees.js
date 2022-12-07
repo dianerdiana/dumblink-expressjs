@@ -113,6 +113,43 @@ exports.getLinktrees = async (req, res) => {
   }
 };
 
+exports.getLinktree = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const data = await linktrees.findOne({
+      where: {
+        id_linktree: id,
+      },
+      attributes: {
+        exclude: ['created_at', 'updated_at'],
+      },
+      include: {
+        model: links,
+        as: 'links',
+      },
+    });
+
+    if (data) {
+      return res.status(200).send({
+        status: true,
+        message: CONSTANTS.delete_success,
+        data,
+      });
+    } else {
+      res.status(200).send({
+        status: true,
+        message: 'Data not found',
+      });
+    }
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error ? error : 'Server error..',
+    });
+  }
+};
+
 exports.deleteLinktree = async (req, res) => {
   const { id } = req.params;
 
