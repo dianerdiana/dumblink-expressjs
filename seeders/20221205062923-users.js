@@ -13,8 +13,8 @@ module.exports = {
         email: 'admin@mail.com',
         password:
           '$2a$10$32/RZ0enXeZ5cYb1MhNAqeow50Evrtt0CT2WXOUxyT/tnWAsPApve',
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        created_at: new Date(),
+        updated_at: new Date(),
       },
     ]);
   },
