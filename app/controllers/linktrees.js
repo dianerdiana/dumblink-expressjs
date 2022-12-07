@@ -1,7 +1,11 @@
 const { linktrees, links } = require('../../models');
 const { nanoid } = require('nanoid');
-const CONSTANTS = require('../helpers/Constants');
 const Joi = require('joi');
+const fs = require('fs-extra');
+const path = require('path');
+
+// Constants Helpers
+const CONSTANTS = require('../helpers/Constants');
 
 exports.addLinktree = async (req, res) => {
   const { id_user } = req.user;
@@ -34,7 +38,7 @@ exports.addLinktree = async (req, res) => {
       description,
       unique_link,
       template,
-      image: process.env.API_BASE_URL + '/uploads/' + image,
+      image,
       view_count: 0,
     });
 
@@ -66,7 +70,10 @@ exports.addLinktree = async (req, res) => {
     res.status(200).send({
       status: true,
       message: CONSTANTS.add_success,
-      data,
+      data: {
+        ...data.dataValues,
+        image: process.env.API_BASE_URL + '/uploads/' + data.image,
+      },
     });
   } catch (error) {
     res.status(500).send({
@@ -94,10 +101,17 @@ exports.getLinktrees = async (req, res) => {
     });
 
     if (allData) {
+      const mappedAllData = allData.map((data) => {
+        return {
+          ...data.dataValues,
+          image: process.env.API_BASE_URL + '/uploads/' + data.image,
+        };
+      });
+      // return console.log(mappedAllData);
       res.status(200).send({
         status: true,
         message: CONSTANTS.success,
-        data: allData,
+        data: mappedAllData,
       });
     } else {
       res.status(500).send({
@@ -133,8 +147,47 @@ exports.getLinktree = async (req, res) => {
     if (data) {
       return res.status(200).send({
         status: true,
+        message: CONSTANTS.success,
+        data: {
+          ...data.dataValues,
+          image: process.env.API_BASE_URL + '/uploads/' + data.image,
+        },
+      });
+    } else {
+      res.status(200).send({
+        status: true,
+        message: 'Data not found',
+      });
+    }
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: error ? error : 'Server error..',
+    });
+  }
+};
+
+exports.updateLinktree = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const data = await linktrees.findOne({
+      where: {
+        id_linktree: id,
+      },
+      attributes: {
+        exclude: ['created_at', 'updated_at'],
+      },
+    });
+
+    if (data) {
+      return res.status(200).send({
+        status: true,
         message: CONSTANTS.delete_success,
-        data,
+        data: {
+          ...data.dataValues,
+          image: process.env.API_BASE_URL + '/uploads/' + data.image,
+        },
       });
     } else {
       res.status(200).send({
@@ -161,8 +214,9 @@ exports.deleteLinktree = async (req, res) => {
     });
 
     if (data) {
-      data.destroy();
-      data.save();
+      await fs.unlink(path.join('uploads/' + data.image));
+      await data.destroy();
+      await data.save();
 
       return res.status(200).send({
         status: true,

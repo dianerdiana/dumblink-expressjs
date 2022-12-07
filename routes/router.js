@@ -9,6 +9,7 @@ const {
   getLinktrees,
   deleteLinktree,
   getLinktree,
+  updateLinktree,
 } = require('../app/controllers/linktrees');
 
 // Middlewares
