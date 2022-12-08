@@ -4,6 +4,7 @@ const cors = require('cors');
 const port = 5000;
 const router = require('./routes/router');
 
+require('pg');
 require('dotenv').config();
 
 app.use(express.json());
