@@ -1,10 +1,10 @@
 module.exports = {
   development: {
-    username: 'dianerdiana',
-    password: 'WDkcUzQ0jms2',
-    database: 'neondb',
-    host: 'ep-mute-fog-029041.ap-southeast-1.aws.neon.tech',
-    dialect: 'postgres',
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
     dialectOptions: {
       ssl: {
         require: true,
@@ -13,18 +13,24 @@ module.exports = {
     },
   },
   test: {
-    username: 'postgres',
-    password: 23514114,
-    database: 'db_dumblink',
-    host: 'localhost',
-    dialect: 'postgres',
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+    dialectOptions: {
+      ssl: {
+        require: true,
+        rejectUnauthorized: false,
+      },
+    },
   },
   production: {
-    username: 'dianerdiana',
-    password: 'WDkcUzQ0jms2',
-    database: 'neondb',
-    host: 'ep-mute-fog-029041.ap-southeast-1.aws.neon.tech',
-    dialect: 'postgres',
+    username: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_DATABASE,
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
     dialectOptions: {
       ssl: {
         require: true,
