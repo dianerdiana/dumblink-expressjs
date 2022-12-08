@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const path = require('path');
 const port = 5000;
 const router = require('./routes/router');
 
@@ -14,7 +15,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 app.use('/api/v1/', router);
-app.use('/uploads', express.static('uploads'));
-app.use('/public', express.static('public'));
+app.use('/uploads/', express.static('./uploads'));
+app.use('/public/', express.static(path.join(__dirname, 'public')));
 
 app.listen(port, () => console.log(`Server is running at port: ${port}`));
