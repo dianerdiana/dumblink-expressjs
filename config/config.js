@@ -1,13 +1,17 @@
+require('dotenv').config();
+
 module.exports = {
   development: {
+    user: process.env.DB_USERNAME,
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
+    dialect: 'postgres',
+    protocol: 'postgres',
     dialectOptions: {
       ssl: {
-        require: true,
+        require: false,
         rejectUnauthorized: false,
       },
     },
@@ -17,7 +21,7 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
+    dialect: 'postgres',
     dialectOptions: {
       ssl: {
         require: true,
@@ -30,7 +34,7 @@ module.exports = {
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     host: process.env.DB_HOST,
-    dialect: process.env.DB_DIALECT,
+    dialect: 'postgres',
     dialectOptions: {
       ssl: {
         require: true,
