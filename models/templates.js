@@ -19,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
       },
       template_name: DataTypes.STRING,
+      image: DataTypes.STRING,
     },
     {
       sequelize,
