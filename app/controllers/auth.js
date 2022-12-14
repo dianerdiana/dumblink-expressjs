@@ -101,7 +101,7 @@ exports.login = async (req, res) => {
       message: CONSTANTS.success,
       data: {
         fullname: user.fullname,
-        email: user.fullname,
+        email: user.email,
         token,
       },
     });
