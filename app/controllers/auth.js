@@ -9,11 +9,14 @@ exports.register = async (req, res) => {
   const { fullname, email, password } = req.body;
 
   const schema = Joi.object({
-    fullname: Joi.string().min(3).required(),
+    fullname: Joi.string().min(3).required().messages({
+      'string.empty': "fullname doesn't be empty",
+      'string.min': 'fullname length must be at least 3 characters',
+    }),
     email: Joi.string().email().min(6).required(),
     password: Joi.string().min(6).required().messages({
       'string.empty': "password doesn't be empty",
-      'string.min': 'password length must be at least 6 characters long',
+      'string.min': 'password length must be at least 6 characters',
     }),
   });
 
@@ -22,8 +25,7 @@ exports.register = async (req, res) => {
   if (error) {
     return res.status(400).send({
       status: false,
-      message: 'Failed',
-      error: error.message,
+      message: error.message,
     });
   }
 
@@ -61,8 +63,13 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   const schema = Joi.object({
-    email: Joi.string().email().min(6).required().messages(),
-    password: Joi.string().min(6).required(),
+    email: Joi.string().email().min(6).required().messages({
+      'string.min': 'email length must be at least 6 characters',
+    }),
+    password: Joi.string().min(6).required().messages({
+      'string.empty': "password doesn't be empty",
+      'string.min': 'password length must be at least 6 characters',
+    }),
   });
 
   const { error } = schema.validate({ email, password });
@@ -70,47 +77,42 @@ exports.login = async (req, res) => {
   if (error) {
     res.status(400).send({
       status: false,
-      message: CONSTANTS.failed,
-      error: error.message,
+      message: error.message,
     });
   }
 
-  const user = await users.findOne({
-    where: { email },
-  });
+  try {
+    const user = await users.findOne({
+      where: { email },
+    });
+    const is_valid = await bcrypt.compare(password, user.password);
 
-  if (user) {
-    try {
-      const is_valid = await bcrypt.compare(password, user.password);
-
-      if (!is_valid) {
-        return res.status(404).send({
-          status: is_valid,
-          message: "Email & Password don't match!",
-        });
-      }
-
-      const token = jwt.sign({ id_user: user.id_user }, process.env.TOKEN_KEY);
-
-      res.status(200).send({
+    if (!is_valid) {
+      return res.status(404).send({
         status: is_valid,
-        message: CONSTANTS.success,
-        data: {
-          fullname: user.fullname,
-          email: user.fullname,
-          token,
-        },
-      });
-    } catch (error) {
-      res.status(500).send({
-        status: false,
-        message: error,
+        message: "Email & Password don't match!",
       });
     }
-  } else {
-    res.status(404).send({
+
+    const token = jwt.sign({ id_user: user.id_user }, process.env.TOKEN_KEY);
+
+    res.status(200).send({
+      status: is_valid,
+      message: CONSTANTS.success,
+      data: {
+        fullname: user.fullname,
+        email: user.fullname,
+        token,
+      },
+    });
+  } catch (error) {
+    res.status(500).send({
       status: false,
       message: "Email & Password don't match!",
     });
   }
+};
+
+exports.logout = async (req, res) => {
+  req.user = null;
 };

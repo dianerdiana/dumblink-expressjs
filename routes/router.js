@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 
 // Controllers
-const { register, login } = require('../app/controllers/auth');
+const { register, login, logout } = require('../app/controllers/auth');
 const { getUser } = require('../app/controllers/users');
 const { getTemplates } = require('../app/controllers/templates');
 const {
@@ -20,6 +20,7 @@ const { upload } = require('../app/middlewares/upload');
 // Authentication
 router.post('/register', register);
 router.post('/login', login);
+router.post('/logout', logout);
 router.get('/user/:id', auth, getUser);
 
 // Templates

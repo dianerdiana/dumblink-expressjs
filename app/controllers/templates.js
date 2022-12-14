@@ -4,7 +4,6 @@ const CONSTANTS = require('../helpers/Constants');
 exports.getTemplates = async (req, res) => {
   const data = await templates.findAll();
 
-  console.log(data);
   if (data) {
     res.status(200).send({
       status: true,
