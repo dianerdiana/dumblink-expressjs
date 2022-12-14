@@ -9,9 +9,11 @@ require('pg');
 require('dotenv').config();
 
 app.use(express.json());
-app.use(cors({
-  origin: '*'
-}));
+app.use(
+  cors({
+    origin: true,
+  })
+);
 
 app.get('/', (req, res) => {
   res.send('Hello World!');
