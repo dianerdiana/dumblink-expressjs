@@ -15,6 +15,13 @@ module.exports = (sequelize, DataTypes) => {
           name: 'linktree_id',
         },
       });
+
+      linktrees.belongsTo(models.templates, {
+        as: 'template',
+        foreignKey: {
+          name: 'template_id',
+        },
+      });
     }
   }
   linktrees.init(
@@ -28,7 +35,7 @@ module.exports = (sequelize, DataTypes) => {
       description: DataTypes.TEXT,
       unique_link: DataTypes.STRING,
       view_count: DataTypes.INTEGER,
-      template: DataTypes.STRING,
+      template_id: DataTypes.INTEGER,
       image: DataTypes.STRING,
       created_by: DataTypes.INTEGER,
       updated_by: DataTypes.INTEGER,

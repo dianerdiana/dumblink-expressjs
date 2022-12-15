@@ -5,28 +5,16 @@ exports.getTemplates = async (req, res) => {
   try {
     const data = await templates.findAll();
 
-    if (data) {
-      res.status(200).send({
-        status: true,
-        message: CONSTANTS.success,
-        data,
-      });
-    } else {
-      res.status(404).send({
-        status: false,
-        message: CONSTANTS.not_found,
-      });
-    }
+    res.status(200).send({
+      status: true,
+      message: CONSTANTS.success,
+      data,
+    });
   } catch (error) {
     res.status(500).send({
       status: false,
       message: CONSTANTS.not_found,
       error,
-    });
-  } finally {
-    res.status(500).send({
-      status: false,
-      message: CONSTANTS.failed,
     });
   }
 };

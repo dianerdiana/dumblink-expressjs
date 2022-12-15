@@ -21,8 +21,14 @@ module.exports = {
       view_count: {
         type: Sequelize.INTEGER,
       },
-      template: {
-        type: Sequelize.STRING,
+      template_id: {
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'templates',
+          key: 'id_template',
+        },
+        onDelete: 'CASCADE',
+        onUpdate: 'CASCADE',
       },
       image: {
         type: Sequelize.STRING,
