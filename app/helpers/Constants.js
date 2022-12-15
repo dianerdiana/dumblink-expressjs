@@ -6,6 +6,7 @@ const CONSTANTS = {
   delete_success: 'Data deleted successfuly',
   delete_failed: 'Failed delete data',
   not_found: 'Data not found',
+  server_error: 'Server error',
 };
 
 module.exports = CONSTANTS;

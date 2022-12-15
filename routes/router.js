@@ -4,7 +4,7 @@ const router = express.Router();
 // Controllers
 const { register, login, logout } = require('../app/controllers/auth');
 const { getUser } = require('../app/controllers/users');
-const { getTemplates } = require('../app/controllers/templates');
+const { getTemplates, getTemplate } = require('../app/controllers/templates');
 const {
   addLinktree,
   getLinktrees,
@@ -25,6 +25,7 @@ router.get('/user/:id', auth, getUser);
 
 // Templates
 router.get('/template/list', getTemplates);
+router.get('/template/:id/view', getTemplate);
 
 // Linktree routes
 router.post('/linktree/store', auth, upload('image'), addLinktree);
