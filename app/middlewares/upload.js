@@ -40,7 +40,8 @@ exports.upload = (imageFile) => {
       }
 
       if (!req.file && !error) {
-        return res.status(400).send({
+        return res.status(200).json({
+          status: false,
           message: 'Please select your image to upload',
         });
       }
@@ -48,6 +49,7 @@ exports.upload = (imageFile) => {
       if (error) {
         if (error.code == 'LIMIT_FILE_SIZE') {
           return res.status(400).send({
+            status: false,
             message: `Max file size is ${sizeInMb}Mb`,
           });
         }

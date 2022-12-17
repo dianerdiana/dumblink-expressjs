@@ -9,23 +9,33 @@ const CONSTANTS = require('../helpers/Constants');
 
 exports.addLinktree = async (req, res) => {
   const { id_user } = req.user;
-  const { title, description, template, link_group } = req.body;
+  const { title, description, template_id, link_group } = req.body;
   const image = req.file.filename;
   const unique_link = nanoid(10);
-  const linkParsed = JSON.parse(link_group);
 
   const schema = Joi.object({
     title: Joi.string().min(5).required(),
     description: Joi.string().min(5).required(),
-  });
+    link_group: Joi.array().items(
+      Joi.object().keys({
+        title: Joi.string().required().messages({
+          'string.empty': "title link doesn't be empty",
+        }),
+        url: Joi.string().required().messages({
+          'string.empty': "url link doesn't be empty",
+        }),
+      })
+    ),
+  }).options({ abortEarly: false });
 
-  const { error } = schema.validate({ title, description });
+  const { error } = schema.validate({ title, description, link_group });
 
   if (error) {
+    await fs.unlink(path.join('uploads/' + image));
+    console.log(error.details);
     return res.status(400).send({
       status: false,
-      message: CONSTANTS.failed,
-      error: error.message,
+      message: error.details.map((res) => res.message),
     });
   }
 
@@ -37,15 +47,15 @@ exports.addLinktree = async (req, res) => {
       title,
       description,
       unique_link,
-      template,
+      template_id,
       image,
       view_count: 0,
     });
 
-    for (let i = 0; i < linkParsed.length; i++) {
+    for (let i = 0; i < link_group.length; i++) {
       const newLink = await links.create({
-        title: linkParsed[i].title,
-        url: linkParsed[i].url,
+        title: link_group[i].title,
+        url: link_group[i].url,
         linktree_id: newLinktree.id_linktree,
       });
 
@@ -76,6 +86,7 @@ exports.addLinktree = async (req, res) => {
       },
     });
   } catch (error) {
+    await fs.unlink(path.join('uploads/' + image));
     res.status(500).send({
       status: false,
       message: error ? error : 'Server error',
@@ -169,8 +180,14 @@ exports.getLinktree = async (req, res) => {
 
 exports.updateLinktree = async (req, res) => {
   const { id_user } = req.user;
-  const { title, id_linktree, description, template, link_group, old_link_id } =
-    req.body;
+  const {
+    title,
+    id_linktree,
+    description,
+    template_id,
+    link_group,
+    old_link_id,
+  } = req.body;
   const image = req.file.filename;
   const unique_link = nanoid(10);
   const linkGroupParsed = JSON.parse(link_group);
@@ -279,7 +296,7 @@ exports.updateLinktree = async (req, res) => {
         title,
         description,
         unique_link,
-        template,
+        template_id,
         image,
         link_id,
       });
