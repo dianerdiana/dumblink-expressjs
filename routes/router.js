@@ -11,6 +11,7 @@ const {
   deleteLinktree,
   getLinktree,
   updateLinktree,
+  viewLinktree,
 } = require('../app/controllers/linktrees');
 
 // Middlewares
@@ -33,5 +34,7 @@ router.get('/linktree/list', auth, getLinktrees);
 router.get('/linktree/:id/edit', auth, getLinktree);
 router.put('/linktree/update', auth, upload('image'), updateLinktree);
 router.delete('/linktree/:id/delete', auth, deleteLinktree);
+
+router.get('/linktree/:unique_link/view', viewLinktree);
 
 module.exports = router;

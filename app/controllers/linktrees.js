@@ -357,3 +357,38 @@ exports.deleteLinktree = async (req, res) => {
     });
   }
 };
+
+exports.viewLinktree = async (req, res) => {
+  const { unique_link } = req.params;
+
+  try {
+    const linktree = await linktrees.findOne({
+      where: {
+        unique_link,
+      },
+      attributes: {
+        exclude: ['created_at', 'updated_at'],
+      },
+      include: {
+        model: links,
+        as: 'links',
+      },
+    });
+
+    console.log(linktree);
+
+    res.status(200).send({
+      status: linktree ? true : false,
+      message: CONSTANTS.success,
+      data: {
+        ...linktree.dataValues,
+        image: process.env.API_BASE_URL + '/uploads/' + linktree.image,
+      },
+    });
+  } catch (error) {
+    res.status(500).send({
+      status: false,
+      message: CONSTANTS.not_found,
+    });
+  }
+};
