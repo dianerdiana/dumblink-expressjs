@@ -12,6 +12,7 @@ const {
   getLinktree,
   updateLinktree,
   viewLinktree,
+  updateCount,
 } = require('../app/controllers/linktrees');
 
 // Middlewares
@@ -36,5 +37,6 @@ router.put('/linktree/update', auth, upload('image'), updateLinktree);
 router.delete('/linktree/:id/delete', auth, deleteLinktree);
 
 router.get('/linktree/:unique_link/view', viewLinktree);
+router.post('/linktree/:unique_link/count', updateCount);
 
 module.exports = router;
