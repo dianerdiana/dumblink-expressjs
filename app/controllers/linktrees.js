@@ -26,7 +26,7 @@ exports.addLinktree = async (req, res) => {
         }),
       })
     ),
-  }).options({ abortEarly: false });
+  });
 
   const { error } = schema.validate({ title, description, link_group });
 
