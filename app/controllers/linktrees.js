@@ -31,7 +31,6 @@ exports.addLinktree = async (req, res) => {
   const { error } = schema.validate({ title, description, link_group });
 
   if (error) {
-    await fs.unlink(path.join('uploads/' + image));
     return res.status(400).send({
       status: false,
       message: error.details.map((res) => res.message),
